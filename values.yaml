@@ -1,0 +1,20 @@
+replicaCount: 1
+
+image:
+  repository: dataopennesscommunity/demo-golden
+  pullPolicy: Always
+  tag: "latest"
+
+service:
+  type: ClusterIP
+  port: 5201
+  targetPort: 5201
+
+ingress:
+  enabled: true
+  pathPrefix: /genai-response
+  proxyConnectTimeout: 300
+  proxySendTimeout: 300
+  proxyReadTimeout: 300
+  
+resources: {}

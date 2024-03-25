@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "langchain-chatbot-denodo.fullname" . }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "langchain-chatbot-denodo.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "langchain-chatbot-denodo.name" . }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          volumeMounts:
+            - name: python-script-volume
+              mountPath: /usr/src/app
+          command: ["python3"]
+          args: ["/usr/src/app/langchain-chatbot-denodo.py"]
+          ports:
+            - containerPort: {{ .Values.service.port }}
+          env:
+            - name: OPENAI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                    name: openai-secret # The name of the Kubernetes Secret
+                    key: openai-key # Key in the secret data
+            - name: DREMIO_PROD_KEY
+              valueFrom:
+                secretKeyRef:
+                    name: dremio-prod-secret
+                    key: prod_key
+      volumes:
+        - name: python-script-volume
+          configMap:
+            name: {{ include "langchain-chatbot-denodo.fullname" . }}
+            items:
+              - key: langchain-chatbot-denodo.py
+                path: langchain-chatbot-denodo.py

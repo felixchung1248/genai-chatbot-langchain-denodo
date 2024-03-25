@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "langchain-chatbot-denodo.fullname" . }}
+data:
+  langchain-chatbot-denodo.py: |-
+{{ .Files.Get "files/langchain-chatbot-denodo.py" | indent 4 }}
