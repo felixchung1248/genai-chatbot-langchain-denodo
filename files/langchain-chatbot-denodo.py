@@ -59,17 +59,14 @@ view_list=engine.execute("LIST VIEWS ALL")
 
 # Iterate over the result set and print each row
 for row in view_list:
-    view_name = row[0]
-    with engine.connect() as connection:
-        # Pandas DataFrame
-        result_proxy = engine.execute(f"select * from {view_name}")
-        pandas_df = pd.DataFrame(result_proxy.fetchall())
-        pandas_df.columns = result_proxy.keys()
-        # Convert the Pandas DataFrame to a Spark DataFrame
-        spark_df = spark.createDataFrame(pandas_df)
-
-        # Write the Spark DataFrame to a Spark table
-        spark_df.write.saveAsTable(view_name)
+    view_name = row[0]  
+    # Pandas DataFrame
+    result_proxy = engine.execute(f"select * from {view_name}")
+    pandas_df = pd.DataFrame(result_proxy.fetchall())   
+    # Convert the Pandas DataFrame to a Spark DataFrame
+    spark_df = spark.createDataFrame(pandas_df) 
+    # Write the Spark DataFrame to a Spark table
+    spark_df.write.saveAsTable(view_name)
     
 
 
